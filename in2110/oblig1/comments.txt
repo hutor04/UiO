@@ -1,0 +1,18 @@
+TestSet (581 Texts within selected categories)
+Tokenizer, Tokens, Types
+text.split(), 310782, 53945
+nltk.word_tokenize(), 351716, 40624
+UDTK, 351985, 40457
+nltks.word_tokenize() lower case, 351496, 37492
+nltks.word_tokenize() puctuation removed, 310941, 40242
+nltks.word_tokenize() ower case and puctuation removed, 310941, 37057
+
+==================
+Test Set
+{'games': (176, 30.292598967297764), 'literature': (352, 60.58519793459553), 'restaurants': (53, 9.122203098106713)}
+
+Train Set
+{'games': (1413, 30.30888030888031), 'literature': (2821, 60.51051051051051), 'restaurants': (428, 9.180609180609181)}
+
+Dev Set
+{'games': (176, 30.240549828178693), 'literature': (353, 60.65292096219931), 'restaurants': (53, 9.106529209621993)}

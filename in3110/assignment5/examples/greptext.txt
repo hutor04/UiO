@@ -1,0 +1,8 @@
+The is non matching line.
+This hello should match.
+An example of a non matching line.
+The world is a beautiful place.
+Hello, world!!
+This is another test line.
+it should be possible to take an “arbitrary” number of regular expressions
+This is another test line.

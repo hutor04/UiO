@@ -1,0 +1,7 @@
+(?P<block_comment>\/\*(.*?.\n.*?|.*?)\*\/): block_comment
+(?P<inline_comment>(\/\/.*)(?=\n)): inline_comment
+(?P<string>".*"): string
+(?P<wrapper>(?P<class_definition>\bclass\b)(?P<class_name>.+)): class
+(?P<keywords>\b(abstract|extends|public|private)\b): keywords
+(?P<operators>=|\+|-|<|>): operators
+(?P<return>\breturn\b): return

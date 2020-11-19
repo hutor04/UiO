@@ -1,0 +1,108 @@
+>>> Is the project realizable: Yes
+>>> Running time (optimal): 218 units.
+>>> Tasks Info:
+--------------------------------------------------------------------------------------------
+   ID |                                NAME |   EST. TIME |    MAN POWER | DEPENDENCIES 
+--------------------------------------------------------------------------------------------
+    1 |                    Install-pavement |          20 |           10 |            
+    2 |                     Install-railing |           7 |           10 |            
+    3 |               Install-ticketmachine |           1 |           10 |            
+    4 |             Paint-tower-1-with-arch |          15 |            6 |            
+    5 |                       Paint-tower-2 |          12 |            6 |            
+    6 |                       Paint-trusses |          27 |            6 |            
+    7 |               Paint-cables-and-rods |          18 |            6 |            
+    8 |    Put-lane-tunnel-and-intersection |          12 |            7 |       3, 31
+    9 |                       Setup-barrack |           3 |           10 | 10, 11, 12, 14, 16, 17
+   10 |                     Prepare-storage |           2 |            4 |           2
+   11 |            Rig-ramspace-reinforcing |           1 |            4 |  18, 19, 20
+   12 |                        Build-tunnel |          30 |           12 |          13
+   13 |                        Clean-tunnel |          18 |           12 |           8
+   14 |                  Build-intersection |          25 |           12 |          15
+   15 |                  Clean-intersection |          20 |           12 |           8
+   16 |             Build-towerfoundation-1 |          35 |           12 |          21
+   17 |             Build-towerfoundation-2 |          45 |           12 |          22
+   18 |              Make-armouring-tower-1 |          40 |            4 |          21
+   19 |              Make-armouring-tower-2 |          25 |            4 |          22
+   20 |                 Make-armouring-arch |          12 |            4 |          23
+   21 |           Encase-and-armour-tower-1 |          15 |            5 |          24
+   22 |           Encase-and-armour-tower-2 |          16 |            5 |          25
+   23 |              Encase-and-armour-arch |          30 |            5 |          26
+   24 |                        Cast-tower-1 |          60 |            7 |       4, 27
+   25 |                        Cast-tower-2 |          60 |            7 |       5, 27
+   26 |                           Cast-arch |          20 |            7 |          31
+   27 |              Stretch-two-maincables |          25 |           10 |      28, 29
+   28 |             Build-truss-1-with-rods |          30 |           10 | 1, 6, 7, 30
+   29 |             Build-truss-2-with-rods |          37 |           10 | 1, 6, 7, 30
+   30 |                  Cast-lane-on-truss |          20 |            7 |          31
+   31 |                 Polish-lane-on-arch |          12 |            7 |            
+--------------------------------------------------------------------------------------------
+>>> Optimal schedule:
+-----------------------------------------------------------------------------------------------------------------------------------
+   ID |                                NAME | EARLY START | EARLY FINISH |  LATE START |  LATE FINISH | START SLACK |   CRITICAL
+-----------------------------------------------------------------------------------------------------------------------------------
+    9 |                       Setup-barrack |           0 |            3 |           0 |            0 |           0 |         No
+   10 |                     Prepare-storage |           3 |            5 |         209 |          211 |         206 |         No
+   11 |            Rig-ramspace-reinforcing |           3 |            4 |           8 |            9 |           5 |         No
+   12 |                        Build-tunnel |           3 |           33 |         146 |          176 |         143 |         No
+   14 |                  Build-intersection |           3 |           28 |         149 |          174 |         146 |         No
+   16 |             Build-towerfoundation-1 |           3 |           38 |          14 |           49 |          11 |         No
+   17 |             Build-towerfoundation-2 |           3 |           48 |           3 |           48 |           0 |        Yes
+   18 |              Make-armouring-tower-1 |           4 |           44 |           9 |           49 |           5 |         No
+   19 |              Make-armouring-tower-2 |           4 |           29 |          23 |           48 |          19 |         No
+   20 |                 Make-armouring-arch |           4 |           16 |         144 |          156 |         140 |         No
+    2 |                     Install-railing |           5 |           12 |         211 |          218 |         206 |         No
+   23 |              Encase-and-armour-arch |          16 |           46 |         156 |          186 |         140 |         No
+   15 |                  Clean-intersection |          28 |           48 |         174 |          194 |         146 |         No
+   13 |                        Clean-tunnel |          33 |           51 |         176 |          194 |         143 |         No
+   21 |           Encase-and-armour-tower-1 |          44 |           59 |          49 |           64 |           5 |         No
+   26 |                           Cast-arch |          46 |           66 |         186 |          206 |         140 |         No
+   22 |           Encase-and-armour-tower-2 |          48 |           64 |          48 |           64 |           0 |        Yes
+    8 |    Put-lane-tunnel-and-intersection |          51 |           63 |         194 |          206 |         143 |         No
+   24 |                        Cast-tower-1 |          59 |          119 |          64 |          124 |           5 |         No
+    3 |               Install-ticketmachine |          63 |           64 |         217 |          218 |         154 |         No
+   25 |                        Cast-tower-2 |          64 |          124 |          64 |          124 |           0 |        Yes
+    4 |             Paint-tower-1-with-arch |         119 |          134 |         203 |          218 |          84 |         No
+    5 |                       Paint-tower-2 |         124 |          136 |         206 |          218 |          82 |         No
+   27 |              Stretch-two-maincables |         124 |          149 |         124 |          149 |           0 |        Yes
+   28 |             Build-truss-1-with-rods |         149 |          179 |         156 |          186 |           7 |         No
+   29 |             Build-truss-2-with-rods |         149 |          186 |         149 |          186 |           0 |        Yes
+    1 |                    Install-pavement |         186 |          206 |         198 |          218 |          12 |         No
+    6 |                       Paint-trusses |         186 |          213 |         191 |          218 |           5 |         No
+    7 |               Paint-cables-and-rods |         186 |          204 |         200 |          218 |          14 |         No
+   30 |                  Cast-lane-on-truss |         186 |          206 |         186 |          206 |           0 |        Yes
+   31 |                 Polish-lane-on-arch |         206 |          218 |         206 |          218 |           0 |        Yes
+-----------------------------------------------------------------------------------------------------------------------------------
+>>> Execution emulation:
+-------------------------------------------------------
+ TIME |      STAFF | TASKS STARTED |   TASK ENDED
+-------------------------------------------------------
+    0 |         10 |            9 |             
+    3 |         56 | 10, 16, 17, 11, 12, 14 |            9
+    4 |         64 |   18, 19, 20 |           11
+    5 |         70 |            2 |           10
+   12 |         60 |              |            2
+   16 |         61 |           23 |           20
+   28 |         61 |           15 |           14
+   29 |         57 |              |           19
+   33 |         57 |           13 |           12
+   38 |         45 |              |           16
+   44 |         46 |           21 |           18
+   46 |         48 |           26 |           23
+   48 |         29 |           22 |       15, 17
+   51 |         24 |            8 |           13
+   59 |         26 |           24 |           21
+   63 |         29 |            3 |            8
+   64 |         21 |           25 |        3, 22
+   66 |         14 |              |           26
+  119 |         13 |            4 |           24
+  124 |         22 |        27, 5 |           25
+  134 |         16 |              |            4
+  136 |         10 |              |            5
+  149 |         20 |       29, 28 |           27
+  179 |         10 |              |           28
+  186 |         29 |  30, 7, 1, 6 |           29
+  204 |         23 |              |            7
+  206 |         13 |           31 |        1, 30
+  213 |          7 |              |            6
+  218 |          0 |              |           31
+-------------------------------------------------------

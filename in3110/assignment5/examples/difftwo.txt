@@ -1,0 +1,219 @@
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
+using System.Data;
+using System.Configuration;
+using System.Threading;
+
+namespace LTTSubLogConsoleApp
+{
+    class Program
+    {
+        private static double queryInterval;
+        private static DateTime latestTimestamp;
+        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["LTTlog"].ConnectionString;
+
+        // Key is DeviceId. Value is an queue of LTT objects of that DeviceId.
+        private static Dictionary<string, Queue<LTT>> list = new Dictionary<string, Queue<LTT>>();
+
+        static void Main()
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nLTTSubLog console app v.1.3");
+            Console.WriteLine("Airtight © 2019");
+            Console.ResetColor();
+
+            GetInterval();
+
+            while (true)
+            {
+                try
+                {
+                    Query();
+                }
+                catch (SqlException)
+                {
+                    Console.WriteLine("Connection failed!");
+                }
+
+                for (int i = 0; i < queryInterval * 60; i++)
+                {
+                    int seconds = Convert.ToInt32(queryInterval * 60 - i);
+                    Console.Write("\rNext query in {0} {1}", seconds, seconds == 1 ? "second.." : "seconds..");
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        /// <summary>
+        /// User determines how often the program should watch for new non-null values of SubDiffPress in LTTLog.
+        /// </summary>
+        private static void GetInterval()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\nPlease specify how often (in minutes, e.g. 0.1 / 0.5 / 1 / 3 ...) the program should watch for new non-null values of SubDiffPress in LTTLog.");
+            Console.ResetColor();
+
+            string intervalString = Console.ReadLine();
+            try
+            {
+                queryInterval = double.Parse(intervalString);
+            }
+            catch (FormatException)
+            {
+                GetInterval();
+            }
+        }
+
+        /// <summary>
+        /// Main job.
+        /// </summary>
+        private static void Query()
+        {
+            Console.Write("\n\n■ Query started at: ");
+            Console.WriteLine(DateTime.Now);
+
+            // Get the latest timestamp in LTTSubLog.
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand
+                {
+                    CommandTimeout = 0,
+                    Connection = connection,
+                    CommandType = CommandType.Text,
+                    CommandText = "SELECT MAX(Timestamp) FROM LTTSubLog"
+                };
+
+                SqlDataReader dataReader = command.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    try
+                    {
+                        latestTimestamp = dataReader.GetDateTime(0);
+                    }
+                    catch (SqlNullValueException)
+                    {
+                        // If the table is empty.
+                        latestTimestamp = new DateTime(2019, 1, 1, 0, 0, 0);
+                    }
+                }
+                dataReader.Close();
+                command.Dispose();
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand
+                {
+                    CommandTimeout = 0,
+                    Connection = connection,
+                    CommandType = CommandType.Text,
+                    CommandText = "SELECT Timestamp, DeviceId, SubDiffPress " +
+                    "FROM LTTLog WHERE SubDiffPress IS NOT NULL " +
+                    "AND Timestamp > @LatestTimestamp AND Timestamp < @OneHourLater"    // Limit query results in one hour for avoiding overload.
+                };
+
+                command.Parameters.AddWithValue("@LatestTimestamp", latestTimestamp);
+                command.Parameters.AddWithValue("@OneHourLater", latestTimestamp + new TimeSpan(1, 0, 0));
+                SqlDataReader dataReader = command.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    DateTime timestamp = dataReader.GetDateTime(0);
+                    string deviceId = dataReader.GetString(1);
+                    string subDiffPress = dataReader.GetString(2);
+
+                    LTT newLTT = new LTT
+                    {
+                        Timestamp = timestamp,
+                        DeviceId = deviceId,
+                        SubDiffPress = subDiffPress
+                    };
+
+                    if (list.ContainsKey(deviceId))
+                    {
+                        Queue<LTT> queue = list[deviceId];
+                        if (queue.Count == 0)
+                        {
+                            // Add newLTT to the end of the queue.
+                            queue.Enqueue(newLTT);
+                        }
+                        // queue.Count == 1
+                        // Add newLTT to the end of the queue if newLTT's timestamp is newer than one that already exists in the queue.
+                        else if (timestamp > queue.Peek().Timestamp)
+                        {
+                            queue.Enqueue(newLTT);
+
+                            // Remove the LTT object the beginning of the queue.
+                            LTT oldLTT = queue.Dequeue();
+
+                            // Copy to LTTSubLog if the time span between two timestamps does not exceed 1 hour.
+                            if (newLTT.Timestamp - oldLTT.Timestamp < new TimeSpan(1, 0, 0))
+                            {
+                                Console.Write(string.Format("{0}\t{1}\t", timestamp.ToString("yyyy-MM-dd"), timestamp.ToString("HH:mm:ss")));
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine(newLTT.DeviceId);
+                                Console.ResetColor();
+                                CopyToLTTSubLog(newLTT, oldLTT);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Queue<LTT> queue = new Queue<LTT>();
+                        queue.Enqueue(newLTT);
+                        list.Add(deviceId, queue);
+                    }
+
+                    latestTimestamp = timestamp;
+                }
+
+                dataReader.Close();
+                command.Dispose();
+            }
+
+            Console.Write("\n■ Query finished at: ");
+            Console.WriteLine(DateTime.Now);
+        }
+
+        private static void CopyToLTTSubLog(LTT newLTT, LTT oldLTT)
+        {
+            string[] tokens = newLTT.SubDiffPress.Split(',');
+
+            TimeSpan duration = newLTT.Timestamp - oldLTT.Timestamp;
+
+            // Interval (in milliseconds) between two records.
+            int milliseconds = Convert.ToInt32(duration.TotalMilliseconds / tokens.Length);
+
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                using SqlConnection connection = new SqlConnection(connectionString);
+                connection.Open();
+
+                SqlCommand command = new SqlCommand
+                {
+                    CommandTimeout = 0,
+                    Connection = connection,
+                    CommandType = CommandType.Text,
+                    CommandText = "INSERT INTO LTTSubLog VALUES (@Timestamp, @DeviceId, @DiffPressKam)"
+                };
+
+                command.Parameters.AddWithValue("@Timestamp", oldLTT.Timestamp + TimeSpan.FromMilliseconds((i + 1) * milliseconds));
+                command.Parameters.AddWithValue("@DeviceId", newLTT.DeviceId);
+                command.Parameters.AddWithValue("@DiffPressKam", tokens[i]);
+                command.ExecuteNonQuery();
+                command.Dispose();
+            }
+        }
+
+        internal class LTT
+        {
+            public DateTime Timestamp;
+            public string DeviceId;
+            public string SubDiffPress;
+        }
+    }
+}

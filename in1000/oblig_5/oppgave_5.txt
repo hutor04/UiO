@@ -1,0 +1,15 @@
+Mike Tyson
+Total fights 58
+Wins 50
+Wins by KO 44
+Losses 6
+Wladimir Klitschko
+Total fights 69
+Wins 64
+Wins by KO 53
+Losses 5
+Muhammad Ali
+Total fights 61
+Wins 56
+Wins by KO 37
+Losses 5

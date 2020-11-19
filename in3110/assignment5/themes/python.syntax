@@ -1,0 +1,14 @@
+(?P<block_comment>("""([^(""")])*""")|('''([^(''')])*''')): block_comment
+(?P<inline_comment>#.*($|\n)): inline_comment
+(?P<wrapper>(?P<function_definition>\bdef\b)(?P<function_name>[^\(\n:]+)): function
+(?P<wrapper>(?P<class_definition>\bclass\b)(?P<class_name>.+)): class
+(?P<string>("[^"]*("|$))|('[^']*('|$))): string
+(?P<import>\b(import)\b): import
+(?P<special_statement>\b(None|True|False)\b): special_statement
+(?P<for>\bfor\b): for
+(?P<while>\bwhile\b): while
+(?P<if_block>\b(if|else|elif)\b): if_block
+(?P<try_except>\b(try|except):): try_except
+(?P<logical_operators>\b(in|and|or|is|not)\b): logical_operators
+(?P<decorator>(\@.+)\b): decorator
+(?P<return>\breturn\b): return

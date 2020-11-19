@@ -1,0 +1,16 @@
+block_comment: 0;31
+inline_comment: 0;32
+function_definition: 0;33
+function_name: 0;34
+class_name: 0;35
+class_definition: 0;36
+string: 0;37
+import: 0;90
+for: 0;91
+while: 0;92
+if_block: 0;93
+special_statement: 0;94
+try_except: 0;95
+logical_operators: 0;96
+decorator: 0;96
+return: 0;97

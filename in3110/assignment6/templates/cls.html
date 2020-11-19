@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Classifier Decision Boundary Visualization</title>
+    </head>
+
+    <body>
+    <div><h1>{{ classifier }} Classifier - Decision Boundary Visualization</h1></div>
+        <div>{% if no_features == 2 %}<img src="/plot.png?m={{ mode }}&f={{ features }}"></img>{% endif %} </div>
+    <div><p><strong>Current Features</strong>: {{ features }}</p>
+        <p><strong>Accuracy on Training Set:</strong> {{ train_acc }}</p>
+        <p><strong>Accuracy on Test Set:</strong> {{ test_acc }}</p>
+
+    </div>
+    <a href="/">BACK</a>
+    </body>
+</html>

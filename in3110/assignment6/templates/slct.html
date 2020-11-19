@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Features and the Type of Classifier</title>
+</head>
+<body>
+    <h1>Select Type of Classifier and Features</h1>
+    <div>
+        <form name="myForm" action="/show" method="post" onsubmit="">
+        <p>
+        <input type="radio" name="classifier" id="option1" value="0"> kNN <br>
+        <input type="radio" name="classifier" id="option2" value="1"> SVC <br>
+        <input type="radio" name="classifier" id="option3" value="2"> NB <br>
+        </p>
+        <p>
+        <input type="checkbox" name="features" value="pregnant"> Pregnant <br>
+        <input type="checkbox" name="features" value="glucose"> Glucose <br>
+        <input type="checkbox" name="features" value="pressure"> Pressure <br>
+        <input type="checkbox" name="features" value="triceps"> Triceps <br>
+        <input type="checkbox" name="features" value="insulin"> Insulin <br>
+        <input type="checkbox" name="features" value="mass"> Mass <br>
+        <input type="checkbox" name="features" value="pedigree"> Pedigree <br>
+        <input type="checkbox" name="features" value="age"> Age <br>
+        </p>
+        <p><input type=submit value=Select></p>
+        </form>
+    </div>
+    <div>
+        <h2>HELP</h2>
+        <ul>
+            <li><a href="./static/docs/data.html">Data.py</a></li>
+            <li><a href="./static/docs/fitting.html">Fitting.py</a></li>
+            <li><a href="./static/docs/visualize.html">Visualize.py</a></li>
+        </ul>
+    </div>
+</body>
+</html>
